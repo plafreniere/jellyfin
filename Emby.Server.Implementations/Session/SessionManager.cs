@@ -427,6 +427,10 @@ namespace Emby.Server.Implementations.Session
         /// <param name="session">The session.</param>
         private void RemoveNowPlayingItem(SessionInfo session)
         {
+            if (session is null) {
+                return;
+            }
+
             session.NowPlayingItem = null;
             session.PlayState = new PlayerStateInfo();
 
@@ -675,6 +679,10 @@ namespace Emby.Server.Implementations.Session
 
         private BaseItem GetNowPlayingItem(SessionInfo session, Guid itemId)
         {
+            if (session is null) {
+                return null;
+            }
+
             var item = session.FullNowPlayingItem;
             if (item is not null && item.Id.Equals(itemId))
             {
@@ -794,7 +802,10 @@ namespace Emby.Server.Implementations.Session
 
             ArgumentNullException.ThrowIfNull(info);
 
-            var session = GetSession(info.SessionId);
+            var session = GetSession(info.SessionId, false);
+            if (session is null) {
+                return;
+            }
 
             var libraryItem = info.ItemId.IsEmpty()
                 ? null
